@@ -9,6 +9,7 @@ function addElement({ name, url }) {
 } 
 
 function removeElement(element) {
+    alert('Tem certeza que deseja excluir?')
     element.parentNode.parentNode.remove();
 }
 
