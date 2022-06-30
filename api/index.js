@@ -1,27 +1,40 @@
-// Importações dos módulos htpp, e url para suas respectivas variáreis htpp e URL.
 const http = require('http')
 const data = require('./url.json')
 const URL = require('url')
+const fs = require('fs')
+const path = require ('path')
 
-// Criação de um servidor
 http.createServer((req, res) => {
-    // res.end(JSON.stringify(data))
 
-    // Preenchimento das variavéis com os dados passado na url
-    const {name, url, del} = URL.parse(req.url,true).query
+    const {name, url, del} = URL.parse(req.url,true).query;
 
-    // Verifica se não existe o NAME e a URL na passagem dos dados pela URL.
+    function writeFile(cb) {
+        fs.writeFile(
+            path.join(__dirname, 'url.json'),
+            JSON.stringify(data, null,  2),
+            err => {
+                if(err) throw err             
+                    cb('Operação realizada com sucesso!')
+            }
+        )
+    }
+
     if(!name || !url){
-        return res.end('show')
+        res.end(JSON.stringify(data));
     }
-    // Verifica se existe o DEL na passagem dos dados pela URL
+
     if(del) {
-        return res.end('delete')
+        data.urls = data.urls.filter(item => item.url != url);
+       
+        return writeFile(message => res.end(message))
     }
-    // Retorno obtido caso os dados nas variáveis NAME e URL existam. 
-    return res.end('create')
+
+    data.urls.push({name , url})
+    return writeFile(message => res.end(message))
 
 }).listen(3000, () => console.log('API is running'));
+
+
 
 // Para Testes
 // URL para retorno SHOW: http://localhost:3000/index.js
